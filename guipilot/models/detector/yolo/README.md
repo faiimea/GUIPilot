@@ -26,7 +26,7 @@ results[0].save(filename="viz.png")
 ---
 
 ## Prepare custom data for training
-- Step 1: Save bounding box annotations to [./datasets/new](datasets/new).
+- Step 1: Save bounding box annotations to [./datasets/new](../../../../datasets/new).
 The folder structure should look like:
 ```
 datasets/
