@@ -1,5 +1,18 @@
 # GUIPilot
 
+This is the official repository for the paper *"GUIPilot: A Consistency-based Mobile GUI Testing Approach for Detecting Application-specific Bugs"*, published at ISSTA 2025.
+
+GUIPilot detects inconsistencies between mobile app designs and their implementations. It addresses two main types of inconsistencies: screen and process inconsistencies, using a combination of widget alignment and vision-language models. We’re continuously updating this repository. Stay tuned for more developments!
+
+- Screen Inconsistency Detection:
+    - Detects differences between the actual and expected UI appearance.
+    - Converts the screen-matching problem into an optimizable widget alignment task.
+
+- Process Inconsistency Detection:
+    - Detects discrepancies between the actual and expected UI transitions after an action.
+    - Translates natural language descriptions of transitions in mockups into stepwise actions (e.g., clicks, long-presses, text inputs).
+    - Utilizes a vision-language model to infer actions on the real screen, ensuring that the expected transitions occur in the app.
+
 ## Structure
 
 This repository contains three components:
