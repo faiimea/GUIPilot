@@ -53,5 +53,85 @@ Clone the repository and follow the steps below:
 
 Each directory within `/experiments` includes a `README.md` file that provides detailed instructions on setting up the environment, preparing datasets, and running the experiment.
 
+## 🏃 Usage
+
+Refer to [`/experiments/rq1_screen_inconsistency/main.py`](../experiments/rq1_screen_inconsistency/main.py) for a complete working example.
+
+### Step 1: Load Screenshots as `Screen` Instances
+
+Each `Screen` instance requires:
+
+* an RGB screenshot (`numpy.ndarray`)
+* a dictionary of widget ID → `Widget` instances (`dict[int, Widget]`)
+
+You can either load widgets externally or use GUIPilot’s built-in widget detector.
+
+#### Option 1: Load Widgets from JSON
+
+```python
+import cv2
+import json
+from guipilot.entities import Bbox, Widget, WidgetType, Screen
+
+# Load screenshot images
+screenA_image = cv2.imread(screenA_path)
+screenB_image = cv2.imread(screenB_path)
+
+# Load widgets from JSON file
+# Example: [{"type": ..., "bbox": [xmin, ymin, xmax, ymax}, ...]
+def load_widgets(path):
+    raw = json.load(open(path, encoding="utf-8"))
+    return {
+        id: Widget(type=WidgetType(item["type"]), bbox=Bbox(*item["bbox"]))
+        for id, item in enumerate(raw)
+    }
+
+screenA = Screen(screenA_image, load_widgets(widgetsA_path))
+screenB = Screen(screenB_image, load_widgets(widgetsB_path))
+```
+
+#### Option 2: Auto-detect Widgets with GUIPilot
+
+```python
+screenA = Screen(screenA_image)
+screenB = Screen(screenB_image)
+
+# Automatically detect widgets and run OCR
+screenA.detect()
+screenA.ocr()
+screenB.detect()
+screenB.ocr()
+```
+
+---
+
+### Step 2: Run Widget Matching and Consistency Checking
+
+```python
+from guipilot.matcher import GUIPilotV2 as Matcher
+from guipilot.checker import GVT as Checker
+
+matcher = Matcher()
+checker = Checker()
+
+# Match widgets between the two screens
+pairs, _, match_time = matcher.match(screenA, screenB)
+
+# Identify widget-level inconsistencies
+y_pred, check_time = checker.check(screenA, screenB, pairs)
+```
+
 ## 📚 Citation
 If you find our work useful, please consider citing our work.
+```
+@article{liu2025guipilot,
+  title={GUIPilot: A Consistency-Based Mobile GUI Testing Approach for Detecting Application-Specific Bugs},
+  author={Liu, Ruofan and Teoh, Xiwen and Lin, Yun and Chen, Guanjie and Ren, Ruofei and Poshyvanyk, Denys and Dong, Jin Song},
+  journal={Proceedings of the ACM on Software Engineering},
+  volume={2},
+  number={ISSTA},
+  pages={753--776},
+  year={2025},
+  publisher={ACM New York, NY, USA}
+}
+```
